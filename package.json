@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "compile-and-run": "tsc && node dist/index.js",
+    "start-dev": "nodemon -e ts --ignore 'frontend' --exec \"npm run compile-and-run\"",
+    "compile": "tsc",
+    "compile-watch": "tsc -w"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.8.7",
+    "@apollo/server": "^4.9.5",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "graphql": "^16.8.1",
+    "octokit": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.9",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
