@@ -1,9 +1,13 @@
 import { Octokit } from 'octokit';
 import { envs } from '../app-config';
+import PromisePool from '../utils/promise-pool';
+
 
 const octokit = new Octokit({
   auth: envs.GITHUB_TOKEN,
 });
+const promisePool = new PromisePool(2);
+
 
 export async function listRepos() {
   return (await octokit.rest.repos.listForUser({
@@ -11,12 +15,26 @@ export async function listRepos() {
   })).data;
 }
 
-// TODO: Limit to two in parallel
 export async function getRepoDetails(repoName: string) {
-  return (await octokit.rest.repos.get({
-    owner: envs.GITHUB_USER_TO_SCAN,
-    repo: repoName,
-  })).data;
+  async function inner() {
+    const repoDetails = (await octokit.rest.repos.get({
+      owner: envs.GITHUB_USER_TO_SCAN,
+      repo: repoName,
+    })).data;
+
+    const files = await getRepoFilesList(repoName);
+    const webhooks = await getRepoWebhooks(repoName);
+
+    return {
+      details: repoDetails,
+      files,
+      webhooks
+    }
+  }
+
+  return await promisePool.add(async () => {
+    return await inner();
+  });
 }
 
 export async function getRepoWebhooks(repoName: string) {

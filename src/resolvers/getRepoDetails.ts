@@ -1,16 +1,13 @@
 import {
   getRepoDetails as githubGetRepoDetails,
-  getRepoFilesList,
   getRepoPathContent,
 } from '../github-api';
 import RepoDetails from '../../types/RepoDetails';
 
 async function getRepoDetails(parent, args): Promise<RepoDetails> {
-  const details = await githubGetRepoDetails(args.repoName);
-  // const webhooks = await getRepoWebhooks(args.repoName);
-  const allFiles = await getRepoFilesList(args.repoName);
+  const { details, webhooks, files } = await githubGetRepoDetails(args.repoName);
 
-  const firstYmlFilePath = allFiles.find((file) => file.name.endsWith('.yml'))?.path;
+  const firstYmlFilePath = files.find((file) => file.name.endsWith('.yml'))?.path;
   const firstYmlFile = await getRepoPathContent(args.repoName, firstYmlFilePath);
   let firstYmlFileContent = null;
   if ('content' in firstYmlFile) {
@@ -20,8 +17,8 @@ async function getRepoDetails(parent, args): Promise<RepoDetails> {
   return {
     ...details,
     owner: details.owner.login,
-    fileCount: allFiles.length,
-    // webhooks,
+    fileCount: files.length,
+    webhooks,
     firstYmlFileContent,
   }
 }

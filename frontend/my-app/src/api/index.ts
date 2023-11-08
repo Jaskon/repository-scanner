@@ -18,7 +18,6 @@ export async function getRepoList(): Promise<Array<RepoOverview>> {
           size
         }
       }
-
     `
   });
 
