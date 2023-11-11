@@ -3,22 +3,27 @@ import { envs } from '../app-config';
 import PromisePool from '../utils/promise-pool';
 
 
+let user = '';
+
 const octokit = new Octokit({
   auth: envs.GITHUB_TOKEN,
+});
+octokit.rest.users.getAuthenticated().then(_user => {
+  user = _user.data.name
 });
 const promisePool = new PromisePool(2);
 
 
 export async function listRepos() {
-  return (await octokit.rest.repos.listForUser({
-    username: envs.GITHUB_USER_TO_SCAN,
+  return (await octokit.rest.repos.listForAuthenticatedUser({
+    username: user,
   })).data;
 }
 
 export async function getRepoDetails(repoName: string) {
   async function inner() {
     const repoDetails = (await octokit.rest.repos.get({
-      owner: envs.GITHUB_USER_TO_SCAN,
+      owner: user,
       repo: repoName,
     })).data;
 
@@ -39,14 +44,14 @@ export async function getRepoDetails(repoName: string) {
 
 export async function getRepoWebhooks(repoName: string) {
   return (await octokit.rest.repos.listWebhooks({
-    owner: envs.GITHUB_USER_TO_SCAN,
+    owner: user,
     repo: repoName,
   })).data;
 }
 
 export async function getRepoPathContent(repoName: string, path: string) {
   return (await octokit.rest.repos.getContent({
-    owner: envs.GITHUB_USER_TO_SCAN,
+    owner: user,
     repo: repoName,
     path,
   })).data;
