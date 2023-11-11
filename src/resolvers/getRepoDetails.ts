@@ -14,11 +14,12 @@ async function getRepoDetails(parent, args): Promise<RepoDetails> {
     firstYmlFileContent = Buffer.from(firstYmlFile.content, 'base64').toString('ascii');
   }
 
+
   return {
     ...details,
     owner: details.owner.login,
     fileCount: files.length,
-    webhooks,
+    webhooks: webhooks.map(one => one.name),
     firstYmlFileContent,
   }
 }

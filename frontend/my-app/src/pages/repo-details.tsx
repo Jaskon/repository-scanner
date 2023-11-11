@@ -28,7 +28,7 @@ function RepoDetails() {
           <p>Owner: {data.owner}</p>
           <p>File count: {data.fileCount}</p>
           <p>Size: {data.size}</p>
-          <p>Is private: {data.private}</p>
+          <p>Is private: {data.private?.toString()}</p>
           <p>First yml file content: {data.firstYmlFileContent}</p>
         </>
       )}

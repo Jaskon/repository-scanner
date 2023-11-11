@@ -13,6 +13,7 @@ type RepoDetails {
     size: Int
     private: Boolean
     firstYmlFileContent: String
+    webhooks: [String]
 }
 
 type Query {

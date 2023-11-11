@@ -9,7 +9,7 @@ const octokit = new Octokit({
   auth: envs.GITHUB_TOKEN,
 });
 octokit.rest.users.getAuthenticated().then(_user => {
-  user = _user.data.name
+  user = _user.data.login
 });
 const promisePool = new PromisePool(2);
 
@@ -17,11 +17,13 @@ const promisePool = new PromisePool(2);
 export async function listRepos() {
   return (await octokit.rest.repos.listForAuthenticatedUser({
     username: user,
+    type: 'owner',
   })).data;
 }
 
 export async function getRepoDetails(repoName: string) {
   async function inner() {
+    console.debug('getRepoDetails. User:', user, 'Repo:', repoName);
     const repoDetails = (await octokit.rest.repos.get({
       owner: user,
       repo: repoName,
